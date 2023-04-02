@@ -1,67 +1,105 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../style/components/Overview.scss";
+import "../style/components/Agents.scss";
+import { IPerson, Person } from "../api/Person";
 
 const Overview = () => {
+  const [data, setdata] = useState<IPerson[]>([]);
+  const [img, setimg] = useState<any>();
+  const first = useRef<any>();
+  const imgUpload = (v: any) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (reader.readyState === 2) setimg(reader.result);
+    };
+    reader.readAsDataURL(v.target.files[0]);
+  };
+  const getData = (e: any) => {
+    e.preventDefault();
+
+    let dataOne = new Person(
+      e.target.fullname.value,
+      img,
+      e.target.date.value,
+      e.target.number.value
+    );
+    setdata([...data, dataOne]);
+    // e.target.reset();
+  };
+  useEffect(() => {
+    let a: number = first.current.offsetTop;
+    let b: number = window.innerHeight;
+    let c = b - a - 40;
+    first.current.style.height = `${c}px`;
+  });
   return (
     <div className="Overview">
       <div className="add">
         <h2>Overview</h2>
         <button>add</button>
       </div>
-      <table className="table table-striped">
-        <thead>
-          <tr>
-            <td>Owner</td>
-            <td>End date</td>
-            <td>Profits</td>
-            <td>Losses</td>
-            <td>Phone</td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <div className="img">
-                <img
-                  src="https://res.klook.com/images/fl_lossy.progressive,q_65/c_fill,w_1200,h_630/w_80,x_15,y_15,g_south_west,l_Klook_water_br_trans_yhcmh3/activities/ys5jqwvg6pgtpacb5kqb/IMG%20Worlds%20of%20Adventure%20Admission%20Ticket%20in%20Dubai%20-%20Klook.jpg"
-                  alt=""
-                />
-                Owner
-              </div>
-            </td>
-            <td>End date</td>
-            <td>Profits</td>
-            <td>Losses</td>
-            <td>Phone</td>
-          </tr>
-          <tr>
-            <td className="img">
-              <img
-                src="https://res.klook.com/images/fl_lossy.progressive,q_65/c_fill,w_1200,h_630/w_80,x_15,y_15,g_south_west,l_Klook_water_br_trans_yhcmh3/activities/ys5jqwvg6pgtpacb5kqb/IMG%20Worlds%20of%20Adventure%20Admission%20Ticket%20in%20Dubai%20-%20Klook.jpg"
-                alt=""
-              />
-              Owner
-            </td>
-            <td>End date</td>
-            <td>Profits</td>
-            <td>Losses</td>
-            <td>Phone</td>
-          </tr>
-          <tr>
-            <td className="img">
-              <img
-                src="https://res.klook.com/images/fl_lossy.progressive,q_65/c_fill,w_1200,h_630/w_80,x_15,y_15,g_south_west,l_Klook_water_br_trans_yhcmh3/activities/ys5jqwvg6pgtpacb5kqb/IMG%20Worlds%20of%20Adventure%20Admission%20Ticket%20in%20Dubai%20-%20Klook.jpg"
-                alt=""
-              />
-              Owner
-            </td>
-            <td>End date</td>
-            <td>Profits</td>
-            <td>Losses</td>
-            <td>Phone</td>
-          </tr>
-        </tbody>
-      </table>
+      <form onSubmit={getData} className="from">
+        <input
+          className="form-control"
+          type="text"
+          name="fullname"
+          id=""
+          placeholder="full name"
+          required
+        />
+        <input
+          className="form-control"
+          type="file"
+          accept=".jpg, .jpeg, .png, .svg"
+          onChange={imgUpload}
+          name="file"
+          id=""
+          required
+        />
+        <input
+          className="form-control"
+          type="date"
+          name="date"
+          id=""
+          required
+        />
+        <input
+          className="form-control"
+          type="tel"
+          name="number"
+          id=""
+          placeholder="telphone number"
+          required
+        />
+        <button className="btn btn-success w-100" type="submit">
+          add
+        </button>
+      </form>
+      <div className="agents mt-3" ref={first}>
+        <table className="table table-striped">
+          <thead>
+            <tr>
+              <td>Owner</td>
+              <td>date</td>
+              <td>Phone</td>
+            </tr>
+          </thead>
+          <tbody>
+            {data?.map((v) => (
+              <tr key={v.id}>
+                <td>
+                  <div className="img">
+                    <img src={v.file} alt="" />
+                    {v.fullname}
+                  </div>
+                </td>
+                <td>{v.date}</td>
+                <td>{v.number}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
