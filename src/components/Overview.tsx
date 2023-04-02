@@ -24,7 +24,7 @@ const Overview = () => {
       e.target.number.value
     );
     setdata([...data, dataOne]);
-    // e.target.reset();
+    e.target.reset();
   };
   useEffect(() => {
     let a: number = first.current.offsetTop;
